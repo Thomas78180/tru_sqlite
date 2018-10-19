@@ -1,0 +1,22 @@
+{
+  "name": "tru_sqlite",
+  "version": "1.0.0",
+  "description": "node sqlite manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thomas78180/tru_sqlite.git"
+  },
+  "keywords": [
+    "sqlite"
+  ],
+  "author": "Thomas Rudrauf <thomas.rudrauf@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thomas78180/tru_sqlite/issues"
+  },
+  "homepage": "https://github.com/Thomas78180/tru_sqlite#readme"
+}
