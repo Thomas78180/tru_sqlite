@@ -1,30 +1,31 @@
-var merge = require('deepmerge');
-var sqlite3 = require('sqlite3');
+const merge = require('deepmerge');
+const sqlite3 = require('sqlite3');
+const fs = require('fs');
 
-module.exports =  function(_options) {
+module.exports =  (_options) => {
 	
-	var _defauts = {
-		database: 'db',
+	const _defauts = {
+		database: '',
 		verbose: true // TODO
 	};
 	
-	var _param = merge(_defauts, _options);
+	const _param = merge(_defauts, _options);
 	
-	var _sqlite3 = sqlite3.verbose();
+	const _sqlite3 = sqlite3.verbose();
 	
-	var _useDatabase = function(options) {
+	const _useDatabase = options => {
 		
-		var defauts = {
+		const defauts = {
 			dbPath: _param.database,
-			onSuccess: function(db) {
+			onSuccess: db => {
 				console.log('db ready');
 			},
-			onError: function(err) {
+			onError: err => {
 				console.log(err);
 			}
 		};
 		
-		var param = merge(defauts, options);
+		const param = merge(defauts, options);
 		
 		if(!param.dbPath) {
 			return param.onError('FAIL SqliteDatabase: dbPath undefined');
@@ -36,25 +37,25 @@ module.exports =  function(_options) {
 	
 	return {
 		useDatabase: _useDatabase,
-		tableList: function(options) {
+		tableList: options => {
 			
-			var defauts = {
+			const defauts = {
 				dbPath: null,
-				onSuccess: function(tables) {
+				onSuccess: tables => {
 					console.log('TABLES', tables);
 				},
-				onError: function(err) {
+				onError: err => {
 					console.log('ERR', err);
 				}
 			};
 			
-			var param = merge(defauts, options);
+			const param = merge(defauts, options);
 			
 			_useDatabase({
 				dbPath: param.dbPath,
-				onSuccess: function(db) {
+				onSuccess: db => {
 					
-					db.all('SELECT * FROM sqlite_master', function(err, tables) {
+					db.all('SELECT * FROM sqlite_master', (err, tables) => {
 						
 						db.close();
 						
@@ -66,15 +67,15 @@ module.exports =  function(_options) {
 				onError: param.onError
 			});
 		},
-		tableInfo: function(options) {
+		tableInfo: options => {
 			
 			var defauts = {
 				dbPath: null,
 				table: null,
-				onSuccess: function(cols) {
+				onSuccess: cols => {
 					console.log('COLS', cols);
 				},
-				onError: function(err) {
+				onError: err => {
 					console.log('ERR', err);
 				}
 			};
@@ -83,9 +84,9 @@ module.exports =  function(_options) {
             
 			_useDatabase({
 				dbPath: param.dbPath,
-				onSuccess: function(db) {
+				onSuccess: db => {
                     
-					db.all('pragma table_info('+param.table+')', function(err, cols) {
+					db.all('pragma table_info('+param.table+')', (err, cols) => {
 						
 						db.close();
 						
@@ -97,38 +98,38 @@ module.exports =  function(_options) {
 				onError: param.onError
 			});
 		},
-		createDatabase: function(options) {
+		createDatabase: options => {
 			_useDatabase({
 				dbPath: options.dbPath,
-				onSuccess: function(db) {
+				onSuccess: db => {
 					db.close();
 					if(options.onSuccess) return options.onSuccess();
 				},
 				onError: options.onError
 			});
 		},
-		createTable: function(options) {
+		createTable: options => {
 			
-			var defauts = {
+			const defauts = {
 				log: false,
 				dbPath: null,
 				name: 'newTable',
 				cols: [
 					{key: 'id', type: 'INT'}
 				],
-				onSuccess: function() {},
-				onError: function(err) {}
+				onSuccess: () => {},
+				onError: err => {}
 			};
 			
-			var param = merge(defauts, options);
+			const param = merge(defauts, options);
 			
 			_useDatabase({
 				dbPath: param.dbPath,
-				onSuccess: function(db) {
+				onSuccess: db => {
 					
-					var definitionTable = '';
+					let definitionTable = '';
 					
-					for(var i = 0, j = param.cols.length; i < j ; i++) {
+					for(let i = 0, j = param.cols.length; i < j ; i++) {
 						
 						if(param.cols[i].key.toLowerCase() === 'id') {
 							definitionTable += 'id INTEGER PRIMARY KEY AUTOINCREMENT';
@@ -142,10 +143,10 @@ module.exports =  function(_options) {
 						}
 					}
 					
-					var sql = 'CREATE TABLE '+param.name+' ('+definitionTable+')';
+					let sql = 'CREATE TABLE '+param.name+' ('+definitionTable+')';
 					if(param.log) console.log('SQL: '+sql);
 					
-					db.run(sql, function(err) {
+					db.run(sql, err => {
 						db.close();
 						if(err) return param.onError(err);
 						param.onSuccess();
@@ -154,47 +155,50 @@ module.exports =  function(_options) {
 				onError: param.onError
 			});
 		},
-		drop: function() {
-			
+		drop: options => {
+			fs.unlink(options.dbPath, err => {
+				if(err) return options.onError(err);
+				options.onSuccess('DB '+options.dbPath+' dropped');
+			});
 		},
-		inserts: function(options) {
+		inserts: options => {
 			// TODO inserer un lot
 		},
-		insert: function(options) {
+		insert: options => {
 			// pour tests unitaires
 			return this.query(options);
 		},
-		select: function(options) {
+		select: options => {
 			// pour tests unitaires
 			return this.query(options);
 		},
-		update: function(options) {
+		update: options => {
 			// pour tests unitaires
 			return this.query(options);
 		},
-		delete: function(options) {
+		delete: options => {
 			// pour tests unitaires
 			return this.query(options);
 		},
-		query: function(options) { // options: sql, args, onSuccess, onError et log
+		query: options => { // options: sql, args, onSuccess, onError et log
 			
-			var defauts = {
+			const defauts = {
 				log: false,
 				dbPath: null,
 				sql: null,
 				args: {},
-				onSuccess: function(data) {},
-				onError: function(err) {}
+				onSuccess: data => {},
+				onError: err => {}
 			};
 			
-			var param = merge(defauts, options);
+			const param = merge(defauts, options);
 			
 			_useDatabase({
 				dbPath: param.dbPath,
-				onSuccess: function(db) {
+				onSuccess: db => {
 					
 					param.sql = param.sql.replace(/:/g, '$');
-					for(var key in param.args) {
+					for(let key in param.args) {
 						param.args['$'+key] = param.args[key];
 						delete param.args[key];
 					}
@@ -206,7 +210,7 @@ module.exports =  function(_options) {
 					
 					if(param.sql.split(' ')[0].toUpperCase() === 'SELECT') {
 						
-						db.all(param.sql, param.args, function(err, rows) {
+						db.all(param.sql, param.args, (err, rows) => {
 							
 							db.close();
 							if(err) {
@@ -219,7 +223,7 @@ module.exports =  function(_options) {
 						});
 					}
 					else {
-						db.run(param.sql, param.args, function(err, rows) {
+						db.run(param.sql, param.args, (err, rows) => {
 							db.close();
 							
 							if(err) {
