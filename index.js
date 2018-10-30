@@ -156,9 +156,9 @@ module.exports =  (_options) => {
 			});
 		},
 		drop: options => {
-			fs.unlink(options.dbPath, err => {
+			fs.unlink(__dirname+'/../../'+options.dbPath, err => {
 				if(err) return options.onError(err);
-				options.onSuccess('DB '+options.dbPath+' dropped');
+				options.onSuccess('DB '+__dirname+'/../../'+options.dbPath+' dropped');
 			});
 		},
 		inserts: options => {
@@ -223,7 +223,7 @@ module.exports =  (_options) => {
 						});
 					}
 					else {
-						db.run(param.sql, param.args, (err, rows) => {
+						db.run(param.sql, param.args, function(err, rows) {
 							db.close();
 							
 							if(err) {
