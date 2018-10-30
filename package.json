@@ -1,6 +1,6 @@
 {
   "name": "tru_sqlite",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "node sqlite manager",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "url": "git+https://github.com/Thomas78180/tru_sqlite.git"
   },
   "keywords": [
-    "sqlite"
+    "sqlite",
+    "electron"
   ],
   "author": "Thomas Rudrauf <thomas.rudrauf@gmail.com>",
   "license": "ISC",

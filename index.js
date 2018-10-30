@@ -31,8 +31,8 @@ module.exports =  (_options) => {
 			return param.onError('FAIL SqliteDatabase: dbPath undefined');
 		}
 		
-		_dbPath = param.dbPath;
-		param.onSuccess(new _sqlite3.Database(process.cwd()+_dbPath));
+		_dbPath = __dirname+'/../../'+param.dbPath;
+		param.onSuccess(new _sqlite3.Database(_dbPath), _dbPath);
 	};
 	
 	return {
