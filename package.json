@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/Thomas78180/tru_sqlite#readme",
   "dependencies": {
-    "tru_extend": "^2.2.1",
-    "sqlite3": "^4.0.2"
+    "sqlite3": "^4.0.2",
+    "tru_extend": "1.0.0",
+    "tru_log": "^1.0.1"
   }
 }
