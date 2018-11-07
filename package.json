@@ -1,6 +1,6 @@
 {
   "name": "tru_sqlite",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "node sqlite manager",
   "main": "index.js",
   "scripts": {
