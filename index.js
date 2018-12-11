@@ -87,7 +87,7 @@ module.exports =  function(_options) {
 			var defauts = {
 				dbPath: _param.dbPath,
 				showSql: _param.sql,
-				log: param.log,
+				log: _param.log,
 				table: null,
 				onSuccess: cols => {
 					log.notice('COLS', cols);
